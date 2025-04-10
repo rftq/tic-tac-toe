@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Random;
 import java.util.Scanner;
@@ -55,8 +56,11 @@ public class Main {
         makeBotTurn(board);
         printBoard(board);
 
-        boolean b = areAllCellsTaken(board);
+        String gameState = checkGameState(board);
         int a = 123;
+
+//        boolean b = areAllCellsTaken(board);
+//        int a = 123;
 
 //        while (gameNotOver)
 //            playerTurn
@@ -110,7 +114,42 @@ public class Main {
         //place O on board
     }
 
-    public static String checkGameState() {
+    public static String checkGameState(String[][] board) {
+        ArrayList<Integer> sums = new ArrayList<>();
+
+//        iterate rows
+        for (int row = 0; row < ROW_COUNT; row++) {
+            int rowSum = 0;
+            for (int col = 0; col < COL_COUNT; col++) {
+                rowSum += calculateNumValue(board[row][col]);
+            }
+            sums.add(rowSum);
+        }
+
+//        iterate columns
+        for (int col = 0; col < COL_COUNT; col++) {
+            int colSum = 0;
+            for (int row = 0; row < ROW_COUNT; row++) {
+                colSum += calculateNumValue(board[row][col]);
+            }
+            sums.add(colSum);
+        }
+
+//        diagonal from top-left to bottom-right
+        int leftDiagonalSum = 0;
+        for (int i = 0; i < ROW_COUNT; i++) {
+            leftDiagonalSum += calculateNumValue(board[i][i]);
+        }
+        sums.add(leftDiagonalSum);
+
+//        diagonal from top-right to bottom-left
+        int rightDiagonalSum = 0;
+        for (int i = 0; i < ROW_COUNT; i++) {
+            leftDiagonalSum += calculateNumValue(board[i][(ROW_COUNT - 1) - i]);
+        }
+        sums.add(rightDiagonalSum);
+
+
         // X = 1, O = -1, empty = 0
         //count sums for rows, columns, diagonals
 
@@ -118,7 +157,26 @@ public class Main {
 //        if sum.contains(-3) -> O won
 //        if allCellsTaken() -> draw
 //        else -> game not over
-        return "";
+
+        if (sums.contains(3)) {
+            return GAME_STATE_X_WON;
+        } else if (sums.contains(-3)) {
+            return GAME_STATE_O_WON;
+        } else if (areAllCellsTaken(board)) {
+            return GAME_STATE_DRAW;
+        } else {
+            return GAME_STATE_NOT_FINISHED;
+        }
+    }
+
+    private static int calculateNumValue(String cellState) {
+        if (Objects.equals(cellState, CELL_STATE_X)) {
+            return 1;
+        } else if (Objects.equals(cellState, CELL_STATE_O)) {
+            return -1;
+        } else {
+            return 0;
+        }
     }
 
 
