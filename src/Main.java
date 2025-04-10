@@ -26,11 +26,13 @@ public class Main {
 //        board[0][0] = CELL_STATE_X;
 //        inputCellCoordinates(board);
 
-        startGameRound();
-        System.out.println("Hello world!");
+        while (true) {
+            startGameRound();
+        }
     }
 
     public static void startGameRound() {
+        System.out.println("Начало нового раунда:");
         String[][] board = createBoard();
         startGameLoop(board);
     }
@@ -40,25 +42,34 @@ public class Main {
 
         for (int row = 0; row < ROW_COUNT; row++) {
             for (int col = 0; col < COL_COUNT; col++) {
-                board[row][col]= CELL_STATE_EMPTY;
+                board[row][col] = CELL_STATE_EMPTY;
             }
         }
         return board;
     }
 
     public static void startGameLoop(String[][] board) {
+        boolean playerTurn = true;
 
-        makePlayerTurn(board);
-        printBoard(board);
+        do {
+            if (playerTurn) {
+                makePlayerTurn(board);
+                printBoard(board);
+            } else {
+                makeBotTurn(board);
+                printBoard(board);
+            }
 
-        System.out.println();
+            playerTurn = !playerTurn;
 
-        makeBotTurn(board);
-        printBoard(board);
+            System.out.println();
 
-        String gameState = checkGameState(board);
-        int a = 123;
-
+            String gameState = checkGameState(board);
+            if (!Objects.equals(gameState, GAME_STATE_NOT_FINISHED)) {
+                System.out.println(gameState);
+                return;
+            }
+        } while (true);
 //        boolean b = areAllCellsTaken(board);
 //        int a = 123;
 
@@ -179,7 +190,8 @@ public class Main {
         }
     }
 
-
+    // X -1, O - (-1), empty - 0
+//    используется для проверки победителя
     public static boolean areAllCellsTaken(String[][] board) {
         for (int row = 0; row < ROW_COUNT; row++) {
             for (int col = 0; col < COL_COUNT; col++) {
@@ -190,7 +202,6 @@ public class Main {
         }
         return true;
     }
-
 
 
     public static void printBoard(String[][] board) {
